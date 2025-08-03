@@ -11,6 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
@@ -48,5 +50,34 @@ public class ProductServiceImplTest {
         Assertions.assertEquals(product, saveProduct);
         verify(productRepository,times(1))
                 .save(product);
+    }
+    @Test
+    void shouldUpdateProduct(){
+        //arrange
+        Product updateProduct=Product.builder()
+                .id(1L)
+                .name("Update Product")
+                .price(21.22)
+                .quantity(11)
+                .build();
+        when(productRepository.findById(1L))
+                .thenReturn(Optional.of(product));
+        when(productRepository.save(any(Product.class)))
+                .thenReturn(product);
+        //action
+        Product result=productService
+                .updateProduct(updateProduct);
+        //assert
+        Assertions.assertEquals(
+                "Update Product",result.getName());
+        Assertions.assertEquals(
+                21.22,result.getPrice()
+        );
+        Assertions.assertEquals(
+                11,result.getQuantity()
+        );
+        verify(productRepository,
+                times(1))
+                .findById(1L);
     }
 }
