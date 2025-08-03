@@ -1,0 +1,52 @@
+package lk.ijse.spring_testing;
+
+import lk.ijse.spring_testing.entity.Product;
+import lk.ijse.spring_testing.repo.ProductRepository;
+import lk.ijse.spring_testing.service.impl.ProductServiceImpl;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+
+@ExtendWith(MockitoExtension.class)
+public class ProductServiceImplTest {
+    @Mock
+    private ProductRepository productRepository;
+
+    @InjectMocks
+    private ProductServiceImpl productService;
+
+    private Product product;
+
+    @BeforeEach
+    public void setUp() {
+        product=Product.builder()
+                .id(1L)
+                .name("Test Product")
+                .price(10.22)
+                .quantity(12)
+                .build();
+    }
+
+    @Test
+    void shouldSaveProduct() {
+        //arrange
+        when(productRepository.save
+                (any(Product.class))).thenReturn(product);
+        //action
+        Product saveProduct =productService
+                .createProduct(product);
+        //assert
+        Assertions.assertNotNull(saveProduct);
+        Assertions.assertEquals(product, saveProduct);
+        verify(productRepository,times(1))
+                .save(product);
+    }
+}
